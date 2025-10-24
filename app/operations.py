@@ -325,8 +325,12 @@ class OperationFactory:
         'multiply': Multiplication,
         'divide': Division,
         'power': Power,
-        'root': Root
-    }
+        'root': Root,
+        'modulus': Modulus,
+        'integerdivision': IntegerDivision,
+        'percentage': Percentage,
+        'absolutedifference': AbsoluteDifference
+}
 
     @classmethod
     def register_operation(cls, name: str, operation_class: type) -> None:
