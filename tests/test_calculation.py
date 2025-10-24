@@ -130,3 +130,21 @@ def test_from_dict_result_mismatch(caplog):
 
     # Assert
     assert "Loaded calculation result 10 differs from computed result 5" in caplog.text
+def test_root_zero_degree():
+    """Test that taking a root with degree 0 raises an error."""
+    with pytest.raises(OperationError, match="Zero root is undefined"):
+        Calculation(operation="Root", operand1=Decimal("16"), operand2=Decimal("0"))
+
+
+def test_format_result_invalid_operation():
+    """Test format_result handles InvalidOperation gracefully."""
+    # Create a calculation with a result that might cause issues
+    calc = Calculation(operation="Addition", operand1=Decimal("2"), operand2=Decimal("3"))
+    
+    # Manually set result to something that would cause InvalidOperation when formatting
+    # (This is a bit tricky since most Decimals format fine, but we're testing the exception path)
+    calc.result = Decimal('Infinity')
+    
+    # The method should handle the exception and return string representation
+    formatted = calc.format_result(precision=2)
+    assert formatted == "Infinity"
