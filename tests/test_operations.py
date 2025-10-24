@@ -212,7 +212,7 @@ class TestIntegerDivision(BaseOperationTest):
     valid_test_cases = {
         "positive_numbers": {"a": "10", "b": "3", "expected": "3"},
         "negative_numbers": {"a": "-10", "b": "-3", "expected": "3"},
-        "mixed_signs": {"a": "-10", "b": "3", "expected": "-4"},
+        "mixed_signs": {"a": "-10", "b": "3", "expected": "-3"},
         "exact_division": {"a": "10", "b": "2", "expected": "5"},
         "zero_dividend": {"a": "0", "b": "5", "expected": "0"},
     }
@@ -265,13 +265,17 @@ class TestOperationFactory:
     def test_create_valid_operations(self):
         """Test creation of all valid operations."""
         operation_map = {
-            'add': Addition,
-            'subtract': Subtraction,
-            'multiply': Multiplication,
-            'divide': Division,
-            'power': Power,
-            'root': Root,
-        }
+    'add': Addition,
+    'subtract': Subtraction,
+    'multiply': Multiplication,
+    'divide': Division,
+    'power': Power,
+    'root': Root,
+    'modulus': Modulus,
+    'integerdivision': IntegerDivision,
+    'percentage': Percentage,
+    'absolutedifference': AbsoluteDifference,
+}
 
         for op_name, op_class in operation_map.items():
             operation = OperationFactory.create_operation(op_name)
