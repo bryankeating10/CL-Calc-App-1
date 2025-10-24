@@ -201,14 +201,13 @@ class TestCalculatorREPL:
         output = mock_stdout.getvalue()
         assert "Error:" in output
 
-    @patch('builtins.input', side_effect=['add', 'invalid', '5', 'exit'])
+    @patch('builtins.input', side_effect=['add', 'invalid', 'exit'])
     @patch('sys.stdout', new_callable=StringIO)
     def test_unexpected_error_in_operation(self, mock_stdout, mock_input):
         """Test that unexpected errors during operation are caught."""
         calculator_repl()
         output = mock_stdout.getvalue()
-        assert "Error:" in output or "Unexpected error:" in output
-
+        assert "Error:" in output
     @patch('builtins.input', side_effect=['unknown_command', 'exit'])
     @patch('sys.stdout', new_callable=StringIO)
     def test_unknown_command(self, mock_stdout, mock_input):
@@ -220,20 +219,31 @@ class TestCalculatorREPL:
 
     @patch('builtins.input', side_effect=[KeyboardInterrupt, 'exit'])
     @patch('sys.stdout', new_callable=StringIO)
+    @patch('builtins.input')
+    @patch('sys.stdout', new_callable=StringIO)
     def test_keyboard_interrupt(self, mock_stdout, mock_input):
         """Test that Ctrl+C is handled gracefully."""
+        call_count = [0]
+        
+        def input_side_effect(prompt):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise KeyboardInterrupt()
+            return 'exit'
+        
+        mock_input.side_effect = input_side_effect
         calculator_repl()
         output = mock_stdout.getvalue()
         assert "Operation cancelled" in output
-
-    @patch('builtins.input', side_effect=[EOFError])
+    @patch('builtins.input')
     @patch('sys.stdout', new_callable=StringIO)
     def test_eof_error(self, mock_stdout, mock_input):
         """Test that EOF (Ctrl+D) is handled gracefully."""
+        mock_input.side_effect = EOFError()
         calculator_repl()
         output = mock_stdout.getvalue()
         assert "Input terminated. Exiting..." in output
-
+        
     def test_fatal_error_during_initialization(self):
         """Test that fatal errors during initialization are raised."""
         with patch('app.calculator.Calculator', side_effect=Exception("Fatal init error")):
